@@ -3,14 +3,13 @@ class StudentsController < ApplicationController
 
   # GET /students
   def index
-    @students = Student.all
-
-    render json: @students
+    students = Student.all
+    render json: { status: 'success', data: students }
   end
 
   # GET /students/1
   def show
-    render json: @student
+    render json: { status: 'success', data: @student }
   end
 
   # POST /students
@@ -18,18 +17,21 @@ class StudentsController < ApplicationController
     @student = Student.new(student_params)
 
     if @student.save
-      render json: @student, status: :created, location: @student
+      render json: { status: 'success', data: @student }, status: :created,
+             location: @student
     else
-      render json: @student.errors, status: :unprocessable_entity
+      render json: { status: 'error', data: @student.errors },
+             status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /students/1
   def update
     if @student.update(student_params)
-      render json: @student
+      render json: { status: 'success', data: @student }
     else
-      render json: @student.errors, status: :unprocessable_entity
+      render json: { status: 'error', data: @student.errors },
+             status: :unprocessable_entity
     end
   end
 
@@ -39,13 +41,14 @@ class StudentsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_student
-      @student = Student.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def student_params
-      params.require(:student).permit(:name, :father_name, :mother_name, :birth_date, :image)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_student
+    @student = Student.find(params[:id])
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  def student_params
+    params.require(:student).permit(:name, :father_name, :mother_name, :birth_date, :image)
+  end
 end
