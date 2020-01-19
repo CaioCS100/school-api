@@ -1,51 +1,44 @@
 class AddressesController < ApplicationController
-  before_action :set_address, only: [:show, :update, :destroy]
+  before_action :set_student, only: [:show, :create, :update, :destroy]
 
-  # GET /addresses
-  def index
-    @addresses = Address.all
-
-    render json: @addresses
-  end
-
-  # GET /addresses/1
+  # GET students/1/address
   def show
-    render json: @address
+    render json: @student.address
   end
 
-  # POST /addresses
+  # POST students/1/address
   def create
-    @address = Address.new(address_params)
+    @student.address = Address.new(address_params)
 
-    if @address.save
-      render json: @address, status: :created, location: @address
+    if @student.save
+      render json: @student.address, status: :created, location: student_address_path(@student)
     else
-      render json: @address.errors, status: :unprocessable_entity
+      render json: @student.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /addresses/1
+  # PATCH/PUT students/1/address
   def update
-    if @address.update(address_params)
-      render json: @address
+    if @student.address.update(address_params)
+      render json: @student.address
     else
-      render json: @address.errors, status: :unprocessable_entity
+      render json: @student.errors, status: :unprocessable_entity
     end
   end
 
-  # DELETE /addresses/1
+  # DELETE students/1/address
   def destroy
-    @address.destroy
+    @student.address.destroy
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_address
-      @address = Address.find(params[:id])
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def address_params
-      params.require(:address).permit(:cep, :street, :number, :city, :uf, :complement, :student_id)
-    end
+  def set_student
+    @student = Student.find(params[:student_id])
+  end
+
+  def address_params
+    ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:cep, :street,
+      :number, :city, :uf, :complement, :student_id])
+  end
 end

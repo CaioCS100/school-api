@@ -6,7 +6,8 @@ namespace :dev do
       show_successful_spinner('Creating database...') { %x(rails db:create) }
       show_successful_spinner('Migrating tables to database...') { %x(rails db:migrate) }
       %x(rails dev:create_one_user)
-      %x(rails dev:create_some_genders)
+      %x(rails dev:create_some_students)
+      %x(rails dev:create_some_addresses)
     else
       show_error_spinner('Deleting database...', 'you must be using the development environment')
     end
@@ -33,6 +34,27 @@ namespace :dev do
             father_name: Faker::Name.name,
             mother_name: Faker::Name.name,
             birth_date: Faker::Date.between(from: 20.years.ago, to: 5.years.ago)
+          )
+        end
+      end
+    else
+      show_error_spinner('Creating some Students...', 'Error! You must be using the development environment')
+    end
+  end
+
+  desc 'Create some addresses'
+  task create_some_addresses: :environment do
+    if Rails.env.development?
+      show_successful_spinner('Creating some Addresses...') do
+        Student.all.each do |student|
+          Address.create!(
+            cep: '57052760',
+            street: Faker::Address.street_address,
+            number: Faker::Address.building_number,
+            city: Faker::Address.city,
+            uf: Faker::Address.country_code,
+            complement: 'In front of the most hospital in the city',
+            student_id: student.id
           )
         end
       end
