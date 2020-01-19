@@ -1,15 +1,17 @@
 class StudentsController < ApplicationController
+  include ErrorSerializer
+
   before_action :set_student, only: [:show, :update, :destroy]
+  before_action :authenticate_login!
 
   # GET /students
   def index
-    students = Student.all
-    render json: { status: 'success', data: students }
+    render json: Student.all
   end
 
   # GET /students/1
   def show
-    render json: { status: 'success', data: @student }
+    render json: @student
   end
 
   # POST /students
@@ -17,21 +19,18 @@ class StudentsController < ApplicationController
     @student = Student.new(student_params)
 
     if @student.save
-      render json: { status: 'success', data: @student }, status: :created,
-             location: @student
+      render json: @student, status: :created, location: @student
     else
-      render json: { status: 'error', data: @student.errors },
-             status: :unprocessable_entity
+      render json: ErrorSerializer.serialize(@student.errors), status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /students/1
   def update
     if @student.update(student_params)
-      render json: { status: 'success', data: @student }
+      render json: @student
     else
-      render json: { status: 'error', data: @student.errors },
-             status: :unprocessable_entity
+      render json: @student.errors, status: :unprocessable_entity
     end
   end
 
