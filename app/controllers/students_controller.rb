@@ -6,7 +6,10 @@ class StudentsController < ApplicationController
 
   # GET /students
   def index
-    render json: Student.all
+    page_number = params[:page] ? params[:page][:number] : 1
+    per_page = params[:page] ? params[:page][:size] : 5
+
+    render json: Student.all.page(page_number).per(per_page)
   end
 
   # GET /students/1
@@ -48,7 +51,7 @@ class StudentsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def student_params
-    ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:name, :father_name,
+    ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:id, :name, :father_name,
       :mother_name, :birth_date, :image])
   end
 end

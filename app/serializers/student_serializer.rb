@@ -8,6 +8,6 @@ class StudentSerializer < ActiveModel::Serializer
   end
 
   has_many :phones do
-    link(:related) { student_path(object) }
+    link(:related) { student_phone_path(object) }
   end
 end

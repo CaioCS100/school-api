@@ -1,4 +1,6 @@
 class AddressesController < ApplicationController
+  include ErrorSerializer
+
   before_action :set_student, only: [:show, :create, :update, :destroy]
 
   # GET students/1/address
@@ -13,7 +15,7 @@ class AddressesController < ApplicationController
     if @student.save
       render json: @student.address, status: :created, location: student_address_path(@student)
     else
-      render json: @student.errors, status: :unprocessable_entity
+      render json: ErrorSerializer.serialize(@student.errors), status: :unprocessable_entity
     end
   end
 
@@ -22,7 +24,7 @@ class AddressesController < ApplicationController
     if @student.address.update(address_params)
       render json: @student.address
     else
-      render json: @student.errors, status: :unprocessable_entity
+      render json: ErrorSerializer.serialize(@student.errors), status: :unprocessable_entity
     end
   end
 
@@ -38,7 +40,7 @@ class AddressesController < ApplicationController
   end
 
   def address_params
-    ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:cep, :street,
+    ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:id, :cep, :street,
       :number, :city, :uf, :complement, :student_id])
   end
 end

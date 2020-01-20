@@ -63,6 +63,29 @@ namespace :dev do
     end
   end
 
+  desc 'Create some Phones'
+  task create_some_phones: :environment do
+    owners = %w[father mother home student grandfather grandmother]
+    if Rails.env.development?
+      show_successful_spinner('Creating some Phones...') do
+        Student.all.each do |student|
+          Random.rand(5).times do
+            phones = Phone.create!(
+              number: Faker::PhoneNumber.cell_phone,
+              number_owner: owners.sample,
+              student_id: student.id
+            )
+
+            student.phones << phones
+            student.save!
+          end
+        end
+      end
+    else
+      show_error_spinner('Creating some Students...', 'Error! You must be using the development environment')
+    end
+  end
+
   private
 
   def show_successful_spinner(msg_initial, msg_end = 'Successful!')
