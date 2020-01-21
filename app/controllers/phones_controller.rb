@@ -1,11 +1,12 @@
 class PhonesController < ApplicationController
   include ErrorSerializer
-  
+
   before_action :set_student, only: [:show, :create, :update, :destroy]
+  before_action :authenticate_login!
 
   # GET students/1/phones
   def show
-    render json: @student.phones
+    render json: @student.phones.nil? ? {} : @student.phones
   end
 
   # POST students/1/phone
@@ -32,7 +33,7 @@ class PhonesController < ApplicationController
 
   # DELETE students/1/phone
   def destroy
-    Phone.find(phone_params[:id]).destroy
+    Phone.find(params[:id]).destroy
   end
 
   private
@@ -43,6 +44,6 @@ class PhonesController < ApplicationController
 
   def phone_params
     ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:id, :number,
-        :number_owner, :student_id])
+        :"number-owner", :student_id])
   end
 end

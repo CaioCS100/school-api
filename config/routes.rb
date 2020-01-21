@@ -5,7 +5,8 @@ Rails.application.routes.draw do
     resource :address, only: [:show, :update, :create, :destroy]
 
     resource :phones, only: [:show]
-    resource :phone, only: [:update, :create, :destroy]
+    resource :phone, only: [:update, :create]
+    delete '/phone/:id', to: 'phones#destroy'
   end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

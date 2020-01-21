@@ -2,10 +2,11 @@ class AddressesController < ApplicationController
   include ErrorSerializer
 
   before_action :set_student, only: [:show, :create, :update, :destroy]
+  before_action :authenticate_login!
 
   # GET students/1/address
   def show
-    render json: @student.address
+    render json: @student.address.nil? ? {} : @student.address
   end
 
   # POST students/1/address

@@ -2,7 +2,7 @@ class StudentsController < ApplicationController
   include ErrorSerializer
 
   before_action :set_student, only: [:show, :update, :destroy]
-  # before_action :authenticate_login!
+  before_action :authenticate_login!
 
   # GET /students
   def index
@@ -51,7 +51,8 @@ class StudentsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def student_params
-    ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:id, :name, :father_name,
-      :mother_name, :birth_date, :image])
+    # :father_name, :mother_name, :birth_date
+    ActiveModelSerializers::Deserialization.jsonapi_parse(params, only: [:id, :name,
+          :"father-name", :"mother-name", :"birth-date", :image])
   end
 end
