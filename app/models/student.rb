@@ -4,6 +4,6 @@ class Student < ApplicationRecord
   validates :mother_name, presence: { message: 'is required' }
   validates :birth_date, presence: { message: 'is required' }
 
-  has_one :address
-  has_many :phones
+  has_one :address, dependent: :destroy
+  has_many :phones, dependent: :destroy
 end
