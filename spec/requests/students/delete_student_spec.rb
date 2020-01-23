@@ -26,6 +26,12 @@ describe 'delete a student route', type: :request do
     expect(response).to have_http_status(:ok)
   end
 
+  it 'delete a non-existent student' do
+    delete '/students/10'
+
+    expect(response).to have_http_status(:not_found)
+  end
+
   private
 
   def get_first_data_attribute(response, attribute_name)

@@ -10,9 +10,9 @@ describe 'put a student route', type: :request do
     student_object = {
       id: @student.id,
       name: 'Junior',
-      'father-name': @student.father_name,
-      'mother-name': @student.mother_name,
-      'birth-date': @student.birth_date
+      'father-name': 'Pai do Junior',
+      'mother-name': 'Mãe do Junior',
+      'birth-date': '2010-01-30'
     }
 
     put "/students/#{@student.id}", params: set_student_params(student_object)
@@ -23,7 +23,35 @@ describe 'put a student route', type: :request do
     expect(select_updated.name).to eq(student_object[:name])
     expect(select_updated.father_name).to eq(student_object[:'father-name'])
     expect(select_updated.mother_name).to eq(student_object[:'mother-name'])
-    expect(select_updated.birth_date).to eq(student_object[:'birth-date'])
+    expect(select_updated.birth_date).to eq(student_object[:'birth-date'].to_date)
+  end
+
+  it 'return a not found' do
+    student_object = {
+      id: @student.id,
+      name: 'Junior',
+      'father-name': 'Pai do Junior',
+      'mother-name': 'Mãe do Junior',
+      'birth-date': '2010-01-30'
+    }
+
+    put '/students/30', params: set_student_params(student_object)
+
+    expect(response).to have_http_status(:not_found)
+  end
+
+  it 'return a unprocessable entity' do
+    student_object = {
+      id: @student.id,
+      name: '',
+      'father-name': '',
+      'mother-name': '',
+      'birth-date': ''
+    }
+
+    put "/students/#{@student.id}", params: set_student_params(student_object)
+
+    expect(response).to have_http_status(:unprocessable_entity)
   end
 
   private

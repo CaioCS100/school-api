@@ -3,6 +3,7 @@ class StudentsController < ApplicationController
 
   before_action :set_student, only: [:show, :update, :destroy]
   before_action :authenticate_login!
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   # GET /students
   def index
@@ -43,6 +44,10 @@ class StudentsController < ApplicationController
   end
 
   private
+
+  def record_not_found(error)
+    render json: { error: error.message }, status: :not_found
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_student

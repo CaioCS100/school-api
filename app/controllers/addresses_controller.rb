@@ -3,6 +3,7 @@ class AddressesController < ApplicationController
 
   before_action :set_student, only: [:show, :create, :update, :destroy]
   before_action :authenticate_login!
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   # GET students/1/address
   def show
@@ -35,6 +36,10 @@ class AddressesController < ApplicationController
   end
 
   private
+
+  def record_not_found(error)
+    render json: { error: error.message }, status: :not_found
+  end
 
   def set_student
     @student = Student.find(params[:student_id])

@@ -30,11 +30,29 @@ describe 'post a student route', type: :request do
     expect(response).to have_http_status(:created)
   end
 
+  it 'should return 4 errors' do
+    post '/students'
+    expect(element_size(response, 'errors')).to eq(4)
+  end
+
+  it 'return a unprocessable entity' do
+    post '/students'
+
+    expect(response).to have_http_status(:unprocessable_entity)
+  end
+
   private
 
   def get_element_attribute(response, attribute_name)
-    parsed_response = JSON.parse(response.body)
-    parsed_response['data']['attributes'][attribute_name]
+    parse_json(response)['data']['attributes'][attribute_name]
+  end
+
+  def element_size(response, attribute_name)
+    parse_json(response)[attribute_name].length
+  end
+
+  def parse_json(response)
+    JSON.parse(response.body)
   end
 
   def set_student_params
