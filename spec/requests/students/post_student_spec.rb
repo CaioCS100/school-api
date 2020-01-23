@@ -1,9 +1,9 @@
 require 'rails_helper'
-require_relative '../factory/factories.rb'
+require_relative '../../factory/factories.rb'
 
 describe 'post a student route', type: :request do
   before do
-    post '/students', params: get_params
+    post '/students', params: set_student_params
   end
 
   it 'returns the student name' do
@@ -37,7 +37,7 @@ describe 'post a student route', type: :request do
     parsed_response['data']['attributes'][attribute_name]
   end
 
-  def get_params
+  def set_student_params
     {
       data: {
         type: 'students',
