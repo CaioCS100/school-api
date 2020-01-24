@@ -38,7 +38,7 @@ describe 'post a student route', type: :request do
     expect(response).to have_http_status(:unauthorized)
   end
 
-  it 'should return 4 errors' do
+  it 'expect return 4 types of students errors' do
     post '/students', headers: @auth_params
     expect(element_size(response, 'errors')).to eq(4)
   end

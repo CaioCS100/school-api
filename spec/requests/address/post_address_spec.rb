@@ -43,7 +43,7 @@ describe 'post a address route', type: :request do
     expect(response).to have_http_status(:unauthorized)
   end
 
-  it 'should return 5 errors' do
+  it 'expect return 5 types of addresses errors' do
     post "/students/#{@student.id}/address", headers: @auth_params
     expect(element_size(response, 'errors')).to eq(5)
   end

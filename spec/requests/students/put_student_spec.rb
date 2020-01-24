@@ -6,75 +6,57 @@ describe 'put a student route', type: :request do
     @student = FactoryBot.create(:random_student)
     @login = FactoryBot.create(:create_login)
     @auth_params = sign_in
-  end
-
-  it 'update a student' do
-    student_object = {
+    @student_object = {
       id: @student.id,
       name: 'Junior',
       'father-name': 'Pai do Junior',
       'mother-name': 'Mãe do Junior',
       'birth-date': '2010-01-30'
     }
+    @incorrect_student_object = {
+      id: @student.id,
+      name: '',
+      'father-name': '',
+      'mother-name': '',
+      'birth-date': ''
+    }
+  end
 
-    put "/students/#{@student.id}", params: set_student_params(student_object),
+  it 'update a student' do
+    put "/students/#{@student.id}", params: set_student_params(@student_object),
                                     headers: @auth_params
 
     select_updated = Student.find(@student.id)
 
     expect(response).to have_http_status(:ok)
-    expect(select_updated.name).to eq(student_object[:name])
-    expect(select_updated.father_name).to eq(student_object[:'father-name'])
-    expect(select_updated.mother_name).to eq(student_object[:'mother-name'])
-    expect(select_updated.birth_date).to eq(student_object[:'birth-date'].to_date)
+    expect(select_updated.name).to eq(@student_object[:name])
+    expect(select_updated.father_name).to eq(@student_object[:'father-name'])
+    expect(select_updated.mother_name).to eq(@student_object[:'mother-name'])
+    expect(select_updated.birth_date).to eq(@student_object[:'birth-date'].to_date)
   end
 
   it 'return a not found' do
-    student_object = {
-      id: @student.id,
-      name: 'Junior',
-      'father-name': 'Pai do Junior',
-      'mother-name': 'Mãe do Junior',
-      'birth-date': '2010-01-30'
-    }
-
-    put '/students/30', params: set_student_params(student_object),
+    put '/students/30', params: set_student_params(@student_object),
                         headers: @auth_params
 
     expect(response).to have_http_status(:not_found)
   end
 
-  it 'should return error of update blank form request' do
+  it 'should return error of student update blank form request' do
     put "/students/#{@student.id}", headers: @auth_params
 
     expect(parse_json(response)['errors']).to eq('Please submit proper sign up data in request body.')
   end
 
   it 'return a unprocessable entity' do
-    student_object = {
-      id: @student.id,
-      name: '',
-      'father-name': '',
-      'mother-name': '',
-      'birth-date': ''
-    }
-
-    put "/students/#{@student.id}", params: set_student_params(student_object),
+    put "/students/#{@student.id}", params: set_student_params(@incorrect_student_object),
                                     headers: @auth_params
 
     expect(response).to have_http_status(:unprocessable_entity)
   end
 
-  it 'return a 4 errors' do
-    student_object = {
-      id: @student.id,
-      name: '',
-      'father-name': '',
-      'mother-name': '',
-      'birth-date': ''
-    }
-
-    put "/students/#{@student.id}", params: set_student_params(student_object),
+  it 'expect return 4 types of students errors' do
+    put "/students/#{@student.id}", params: set_student_params(@incorrect_student_object),
                                     headers: @auth_params
 
     expect(element_size(response, 'errors')).to eq(4)

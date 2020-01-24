@@ -4,6 +4,8 @@ class AddressesController < ApplicationController
   before_action :set_student, only: [:show, :create, :update, :destroy]
   before_action :authenticate_login!
 
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+
   # GET students/1/address
   def show
     render json: @student.address.nil? ? {} : @student.address
@@ -23,10 +25,14 @@ class AddressesController < ApplicationController
 
   # PATCH/PUT students/1/address
   def update
-    if @student.address.update(address_params)
-      render json: @student.address
+    if params.key?(:data) && params[:data][:attributes].present?
+      if @student.address.update(address_params)
+        render json: @student.address
+      else
+        render json: ErrorSerializer.serialize(@student.address.errors), status: :unprocessable_entity
+      end
     else
-      render json: ErrorSerializer.serialize(@student.errors), status: :unprocessable_entity
+      render json: {errors: 'Please submit proper sign up data in request body.'}, status: :unprocessable_entity
     end
   end
 
@@ -36,7 +42,11 @@ class AddressesController < ApplicationController
   end
 
   private
-  
+
+  def record_not_found(error)
+    render json: { error: error.message }, status: :not_found
+  end
+
   def set_student
     @student = Student.find(params[:student_id])
   end

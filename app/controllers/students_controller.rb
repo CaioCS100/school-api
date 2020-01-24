@@ -3,6 +3,7 @@ class StudentsController < ApplicationController
 
   before_action :set_student, only: [:show, :update, :destroy]
   before_action :authenticate_login!
+
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   # GET /students

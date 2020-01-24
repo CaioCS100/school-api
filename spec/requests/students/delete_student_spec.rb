@@ -29,7 +29,9 @@ describe 'delete a student route', type: :request do
   end
 
   it 'delete a non-existent student' do
-    delete '/students/30', headers: @auth_params
+    student = Student.last
+
+    delete "/students/#{student.id + 1}", headers: @auth_params
 
     expect(response).to have_http_status(:not_found)
   end
