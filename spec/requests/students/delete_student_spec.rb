@@ -5,20 +5,22 @@ describe 'delete a student route', type: :request do
   before(:each) do
     @student_one = FactoryBot.create(:random_student)
     @student_two = FactoryBot.create(:random_student)
+    @login = FactoryBot.create(:create_login)
+    @auth_params = sign_in
   end
 
   it 'delete one student and expect http status no content' do
-    delete "/students/#{@student_one.id}"
+    delete "/students/#{@student_one.id}", headers: @auth_params
 
     expect(response).to have_http_status(:no_content)
   end
 
   it 'delete one student and check if exist another' do
-    delete "/students/#{@student_one.id}"
+    delete "/students/#{@student_one.id}", headers: @auth_params
 
     expect(response).to have_http_status(:no_content)
 
-    get '/students'
+    get '/students', headers: @auth_params
 
     expect(element_size(response, 'data')).to eq(1)
     expect(get_first_data_attribute(response, 'name')).to eq(@student_two.name)
@@ -27,7 +29,7 @@ describe 'delete a student route', type: :request do
   end
 
   it 'delete a non-existent student' do
-    delete '/students/10'
+    delete '/students/10', headers: @auth_params
 
     expect(response).to have_http_status(:not_found)
   end
@@ -52,5 +54,18 @@ describe 'delete a student route', type: :request do
 
   def student_array_elements
     %w[birth-date father-name image mother-name name]
+  end
+
+  def sign_in
+    post '/auth/sign_in', params: { email: @login.email, password: @login.password }
+
+    auth_params = {
+      'access-token' => response.headers['access-token'],
+      'client' => response.headers['client'],
+      'uid' => response.headers['uid'],
+      'token_type' => response.headers['token-type']
+    }
+
+    auth_params
   end
 end

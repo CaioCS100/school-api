@@ -4,6 +4,8 @@ require_relative '../../factory/factories.rb'
 describe 'put a student route', type: :request do
   before(:each) do
     @student = FactoryBot.create(:random_student)
+    @login = FactoryBot.create(:create_login)
+    @auth_params = sign_in
   end
 
   it 'update a student' do
@@ -15,7 +17,8 @@ describe 'put a student route', type: :request do
       'birth-date': '2010-01-30'
     }
 
-    put "/students/#{@student.id}", params: set_student_params(student_object)
+    put "/students/#{@student.id}", params: set_student_params(student_object),
+                                    headers: @auth_params
 
     select_updated = Student.find(@student.id)
 
@@ -35,7 +38,8 @@ describe 'put a student route', type: :request do
       'birth-date': '2010-01-30'
     }
 
-    put '/students/30', params: set_student_params(student_object)
+    put '/students/30', params: set_student_params(student_object),
+                        headers: @auth_params
 
     expect(response).to have_http_status(:not_found)
   end
@@ -49,7 +53,8 @@ describe 'put a student route', type: :request do
       'birth-date': ''
     }
 
-    put "/students/#{@student.id}", params: set_student_params(student_object)
+    put "/students/#{@student.id}", params: set_student_params(student_object),
+                                    headers: @auth_params
 
     expect(response).to have_http_status(:unprocessable_entity)
   end
@@ -59,6 +64,19 @@ describe 'put a student route', type: :request do
   def get_element_attribute(response, attribute_name)
     parsed_response = JSON.parse(response.body)
     parsed_response['data']['attributes'][attribute_name]
+  end
+
+  def sign_in
+    post '/auth/sign_in', params: { email: @login.email, password: @login.password }
+
+    auth_params = {
+      'access-token' => response.headers['access-token'],
+      'client' => response.headers['client'],
+      'uid' => response.headers['uid'],
+      'token_type' => response.headers['token-type']
+    }
+
+    auth_params
   end
 
   def set_student_params(student_object)

@@ -3,7 +3,9 @@ require_relative '../../factory/factories.rb'
 
 describe 'post a student route', type: :request do
   before do
-    post '/students', params: set_student_params
+    @login = FactoryBot.create(:create_login)
+    @auth_params = sign_in
+    post '/students', params: set_student_params, headers: @auth_params
   end
 
   it 'returns the student name' do
@@ -30,13 +32,19 @@ describe 'post a student route', type: :request do
     expect(response).to have_http_status(:created)
   end
 
-  it 'should return 4 errors' do
+  it 'return student not authenticated' do
     post '/students'
+
+    expect(response).to have_http_status(:unauthorized)
+  end
+
+  it 'should return 4 errors' do
+    post '/students', headers: @auth_params
     expect(element_size(response, 'errors')).to eq(4)
   end
 
   it 'return a unprocessable entity' do
-    post '/students'
+    post '/students', headers: @auth_params
 
     expect(response).to have_http_status(:unprocessable_entity)
   end
@@ -53,6 +61,19 @@ describe 'post a student route', type: :request do
 
   def parse_json(response)
     JSON.parse(response.body)
+  end
+
+  def sign_in
+    post '/auth/sign_in', params: { email: @login.email, password: @login.password }
+
+    auth_params = {
+      'access-token' => response.headers['access-token'],
+      'client' => response.headers['client'],
+      'uid' => response.headers['uid'],
+      'token_type' => response.headers['token-type']
+    }
+
+    auth_params
   end
 
   def set_student_params

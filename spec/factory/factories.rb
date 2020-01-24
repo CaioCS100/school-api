@@ -2,6 +2,11 @@ FactoryBot.define do
   owners = %w[father mother home student grandfather grandmother]
   student = Student.all.sample
 
+  factory :create_login, class: Login do
+    email { 'adm@adm.com' }
+    password { '123456' }
+  end
+
   factory :random_student, class: Student do
     name { Faker::Name.name }
     father_name { Faker::Name.name }
