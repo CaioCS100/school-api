@@ -8,7 +8,7 @@ describe 'put a address route', type: :request do
     @login = FactoryBot.create(:create_login)
     @auth_params = sign_in
     @address_object = {
-      id: @student.id,
+      id: @address.id,
       cep: '59069330',
       street: 'Rua Doutor Costa Ribeiro',
       number: '121',
@@ -17,7 +17,7 @@ describe 'put a address route', type: :request do
       complement: 'editando complemento'
     }
     @incorrect_address_object = {
-      id: @student.id,
+      id: @address.id,
       cep: '',
       street: '',
       number: '',
@@ -100,6 +100,7 @@ describe 'put a address route', type: :request do
   def set_address_params(address_object)
     {
       data: {
+        id: address_object[:id],
         type: 'addresses',
         'attributes': {
           cep: address_object[:cep],

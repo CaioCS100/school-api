@@ -12,23 +12,28 @@ class PhonesController < ApplicationController
 
   # POST students/1/phone
   def create
-    @student.phones << Phone.new(phone_params)
+    phone = Phone.new(phone_params)
+    phone.student_id = @student.id
 
-    if @student.save
+    if phone.save
       render json: @student.phones, status: :created, location: student_phone_path(@student)
     else
-      render json: ErrorSerializer.serialize(@student.errors), status: :unprocessable_entity
+      render json: ErrorSerializer.serialize(phone.errors), status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT students/1/phone
   def update
-    phone = Phone.find(phone_params[:id])
+    if params.key?(:data) && params[:data][:id].present? && params[:data][:attributes].present?
+      phone = Phone.find(phone_params[:id])
 
-    if phone.update(phone_params)
-      render json: @student.phones
+      if phone.update(phone_params)
+        render json: @student.phones
+      else
+        render json: ErrorSerializer.serialize(phone.errors), status: :unprocessable_entity
+      end
     else
-      render json: ErrorSerializer.serialize(phone.errors), status: :unprocessable_entity
+      render json: {errors: 'Please submit proper sign up data in request body.'}, status: :unprocessable_entity
     end
   end
 

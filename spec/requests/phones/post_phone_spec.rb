@@ -1,19 +1,17 @@
 require 'rails_helper'
 require_relative '../../factory/factories.rb'
 
-describe 'post a student route', type: :request do
+describe 'post a phones route', type: :request do
   before do
+    @student = FactoryBot.create(:random_student)
     @login = FactoryBot.create(:create_login)
     @auth_params = sign_in
-    post '/students', params: set_student_params, headers: @auth_params
+    post "/students/#{@student.id}/phone", params: set_phone_params, headers: @auth_params
   end
 
-  it 'returns the created attributes of Student' do
-    expect(get_element_attribute(response, 'name')).to eq('Arthur')
-    expect(get_element_attribute(response, 'father-name')).to eq('Pai do Arthur')
-    expect(get_element_attribute(response, 'mother-name')).to eq('Mãe do Arthur')
-    expect(get_element_attribute(response, 'birth-date')).to eq('2000-12-12')
-    expect(get_element_attribute(response, 'image')).to eq(nil)
+  it 'returns the created attributes of Phone' do
+    expect(get_element_attribute(response, 'number')).to eq('999999999')
+    expect(get_element_attribute(response, 'number-owner')).to eq('Home')
   end
 
   it 'returns a created status' do
@@ -21,18 +19,19 @@ describe 'post a student route', type: :request do
   end
 
   it 'return student not authenticated' do
-    post '/students'
+    post "/students/#{@student.id}/phone", params: set_phone_params
 
     expect(response).to have_http_status(:unauthorized)
   end
 
-  it 'expect return 4 types of students errors' do
-    post '/students', headers: @auth_params
-    expect(element_size(response, 'errors')).to eq(4)
+  it 'expect return 2 types of addresses errors' do
+    post "/students/#{@student.id}/phone", headers: @auth_params
+
+    expect(element_size(response, 'errors')).to eq(2)
   end
 
   it 'return a unprocessable entity' do
-    post '/students', headers: @auth_params
+    post "/students/#{@student.id}/phone", headers: @auth_params
 
     expect(response).to have_http_status(:unprocessable_entity)
   end
@@ -40,7 +39,7 @@ describe 'post a student route', type: :request do
   private
 
   def get_element_attribute(response, attribute_name)
-    parse_json(response)['data']['attributes'][attribute_name]
+    parse_json(response)['data'][0]['attributes'][attribute_name]
   end
 
   def element_size(response, attribute_name)
@@ -64,15 +63,13 @@ describe 'post a student route', type: :request do
     auth_params
   end
 
-  def set_student_params
+  def set_phone_params
     {
       data: {
-        type: 'students',
+        type: 'phones',
         'attributes': {
-          name: 'Arthur',
-          'father-name': 'Pai do Arthur',
-          'mother-name': 'Mãe do Arthur',
-          'birth-date': '2000-12-12'
+          number: '999999999',
+          'number-owner': 'Home'
         }
       }
     }

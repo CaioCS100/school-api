@@ -9,27 +9,12 @@ describe 'post a address route', type: :request do
     post "/students/#{@student.id}/address", params: set_address_params, headers: @auth_params
   end
 
-  it 'returns the building cep' do
+  it 'returns the created attributes of Address' do
     expect(get_element_attribute(response, 'cep')).to eq('57055000')
-  end
-
-  it 'returns the building street' do
     expect(get_element_attribute(response, 'street')).to eq('Av. Fernandes Lima')
-  end
-
-  it 'returns the building number' do
     expect(get_element_attribute(response, 'number')).to eq(12)
-  end
-
-  it 'returns the name of the city where the address is located' do
     expect(get_element_attribute(response, 'city')).to eq('Maceió')
-  end
-
-  it 'returns the Address uf' do
     expect(get_element_attribute(response, 'uf')).to eq('AL')
-  end
-
-  it 'returns the Address complement' do
     expect(get_element_attribute(response, 'complement')).to eq('É uma avenida')
   end
 

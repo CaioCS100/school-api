@@ -24,11 +24,8 @@ FactoryBot.define do
   end
 
   factory :random_phone, class: Phone do
-    student = Student.all.sample
-    Random.rand(5).times do
-      number { Faker::PhoneNumber.cell_phone }
-      number_owner { owners.sample }
-      student_id { student.id }
-    end
+    number { Faker::PhoneNumber.cell_phone }
+    number_owner { owners.sample }
+    student_id { Student.all.sample.id }
   end
 end

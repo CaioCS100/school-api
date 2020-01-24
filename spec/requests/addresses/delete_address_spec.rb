@@ -9,7 +9,7 @@ describe 'delete a address route', type: :request do
     @auth_params = sign_in
   end
 
-  it 'delete one student and expect http status no content' do
+  it 'delete address and expect http status no content' do
     delete "/students/#{@student.id}/address", headers: @auth_params
 
     expect(response).to have_http_status(:no_content)
@@ -26,7 +26,7 @@ describe 'delete a address route', type: :request do
     expect(response).to have_http_status(:ok)
   end
 
-  it 'delete a non-existent student' do
+  it 'delete a address of a non-existent student' do
     student = Student.last
 
     delete "/students/#{student.id + 1}/address", headers: @auth_params
