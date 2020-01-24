@@ -1,6 +1,5 @@
 FactoryBot.define do
   owners = %w[father mother home student grandfather grandmother]
-  student = Student.all.sample
 
   factory :create_login, class: Login do
     email { 'adm@adm.com' }
@@ -21,10 +20,11 @@ FactoryBot.define do
     city { Faker::Address.city }
     uf { Faker::Address.country_code }
     complement { Faker::Lorem.paragraph_by_chars(number: 100, supplemental: false) }
-    student_id { student.id }
+    student_id { Student.all.sample.id }
   end
 
   factory :random_phone, class: Phone do
+    student = Student.all.sample
     Random.rand(5).times do
       number { Faker::PhoneNumber.cell_phone }
       number_owner { owners.sample }

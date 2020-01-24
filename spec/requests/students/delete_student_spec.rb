@@ -29,7 +29,7 @@ describe 'delete a student route', type: :request do
   end
 
   it 'delete a non-existent student' do
-    delete '/students/10', headers: @auth_params
+    delete '/students/30', headers: @auth_params
 
     expect(response).to have_http_status(:not_found)
   end

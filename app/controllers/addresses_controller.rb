@@ -3,7 +3,6 @@ class AddressesController < ApplicationController
 
   before_action :set_student, only: [:show, :create, :update, :destroy]
   before_action :authenticate_login!
-  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   # GET students/1/address
   def show
@@ -12,12 +11,13 @@ class AddressesController < ApplicationController
 
   # POST students/1/address
   def create
-    @student.address = Address.new(address_params)
+    address = Address.new(address_params)
+    address.student_id = params[:student_id]
 
-    if @student.save
+    if address.save
       render json: @student.address, status: :created, location: student_address_path(@student)
     else
-      render json: ErrorSerializer.serialize(@student.errors), status: :unprocessable_entity
+      render json: ErrorSerializer.serialize(address.errors), status: :unprocessable_entity
     end
   end
 
@@ -36,11 +36,7 @@ class AddressesController < ApplicationController
   end
 
   private
-
-  def record_not_found(error)
-    render json: { error: error.message }, status: :not_found
-  end
-
+  
   def set_student
     @student = Student.find(params[:student_id])
   end

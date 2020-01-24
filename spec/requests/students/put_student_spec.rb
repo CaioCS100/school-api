@@ -44,6 +44,12 @@ describe 'put a student route', type: :request do
     expect(response).to have_http_status(:not_found)
   end
 
+  it 'should return error of update blank form request' do
+    put "/students/#{@student.id}", headers: @auth_params
+
+    expect(parse_json(response)['errors']).to eq('Please submit proper sign up data in request body.')
+  end
+
   it 'return a unprocessable entity' do
     student_object = {
       id: @student.id,
@@ -57,6 +63,21 @@ describe 'put a student route', type: :request do
                                     headers: @auth_params
 
     expect(response).to have_http_status(:unprocessable_entity)
+  end
+
+  it 'return a 4 errors' do
+    student_object = {
+      id: @student.id,
+      name: '',
+      'father-name': '',
+      'mother-name': '',
+      'birth-date': ''
+    }
+
+    put "/students/#{@student.id}", params: set_student_params(student_object),
+                                    headers: @auth_params
+
+    expect(element_size(response, 'errors')).to eq(4)
   end
 
   private
@@ -77,6 +98,14 @@ describe 'put a student route', type: :request do
     }
 
     auth_params
+  end
+
+  def element_size(response, attribute_name)
+    parse_json(response)[attribute_name].length
+  end
+
+  def parse_json(response)
+    JSON.parse(response.body)
   end
 
   def set_student_params(student_object)

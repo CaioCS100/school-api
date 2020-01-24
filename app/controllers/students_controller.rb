@@ -31,10 +31,14 @@ class StudentsController < ApplicationController
 
   # PATCH/PUT /students/1
   def update
-    if @student.update(student_params)
-      render json: @student
+    if params.key?(:data) && params[:data][:attributes].present?
+      if @student.update(student_params)
+        render json: @student
+      else
+        render json: ErrorSerializer.serialize(@student.errors), status: :unprocessable_entity
+      end
     else
-      render json: @student.errors, status: :unprocessable_entity
+      render json: {errors: 'Please submit proper sign up data in request body.'}, status: :unprocessable_entity
     end
   end
 
