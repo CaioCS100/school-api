@@ -10,13 +10,13 @@ describe 'delete a address route', type: :request do
   end
 
   it 'delete address and expect http status no content' do
-    delete "/students/#{@student.id}/address", headers: @auth_params
+    delete "/students/#{@student.id}/address/#{@address.id}", headers: @auth_params
 
     expect(response).to have_http_status(:no_content)
   end
 
   it 'delete a address and check if exist student without address' do
-    delete "/students/#{@student.id}/address", headers: @auth_params
+    delete "/students/#{@student.id}/address/#{@address.id}", headers: @auth_params
 
     expect(response).to have_http_status(:no_content)
 
@@ -29,7 +29,7 @@ describe 'delete a address route', type: :request do
   it 'delete a address of a non-existent student' do
     student = Student.last
 
-    delete "/students/#{student.id + 1}/address", headers: @auth_params
+    delete "/students/#{student.id + 1}/address/#{@address.id}", headers: @auth_params
 
     expect(response).to have_http_status(:not_found)
   end

@@ -38,7 +38,7 @@ class AddressesController < ApplicationController
 
   # DELETE students/1/address
   def destroy
-    @student.address.destroy unless Address.find(params[:student_id]).nil?
+    Address.find(params[:id]).destroy
   end
 
   private

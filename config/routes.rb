@@ -2,7 +2,8 @@ Rails.application.routes.draw do
   mount_devise_token_auth_for 'Login', at: 'auth'
 
   resources :students do
-    resource :address, only: [:show, :update, :create, :destroy]
+    resource :address, only: [:show, :update, :create]
+    delete '/address/:id', to: 'addresses#destroy'
 
     resource :phones, only: [:show]
     resource :phone, only: [:update, :create]
