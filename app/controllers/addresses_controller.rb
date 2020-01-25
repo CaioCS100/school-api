@@ -36,7 +36,7 @@ class AddressesController < ApplicationController
     end
   end
 
-  # DELETE students/1/address
+  # DELETE students/1/address/1
   def destroy
     Address.find(params[:id]).destroy
   end

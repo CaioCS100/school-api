@@ -37,7 +37,7 @@ class PhonesController < ApplicationController
     end
   end
 
-  # DELETE students/1/phone
+  # DELETE students/1/phone/1
   def destroy
     Phone.find(params[:id]).destroy
   end
